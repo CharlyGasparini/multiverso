@@ -78,22 +78,22 @@ function calcularCuotas(subtotal){
         switch(select){
             case "3":
                 totalRecargo = subtotal * 1.1;
-                return "El total a abonar es de $" + totalRecargo + " en " + select + " cuotas de $" + totalRecargo / parseInt(select);
+                return "El total a abonar es de $" + totalRecargo.toFixed(2) + " en " + select + " cuotas de $" + (totalRecargo / parseInt(select)).toFixed(2);
             case "6":
                 totalRecargo = subtotal * 1.25;
-                return "El total a abonar es de $" + totalRecargo + " en " + select + " cuotas de $" + totalRecargo / parseInt(select);
+                return "El total a abonar es de $" + totalRecargo + " en " + select + " cuotas de $" + (totalRecargo / parseInt(select)).toFixed(2);
             case "9":
                 totalRecargo = subtotal * 1.40;
-                return "El total a abonar es de $" + totalRecargo + " en " + select + " cuotas de $" + totalRecargo / parseInt(select);
+                return "El total a abonar es de $" + totalRecargo + " en " + select + " cuotas de $" + (totalRecargo / parseInt(select)).toFixed(2);
             case "12":
                 totalRecargo = subtotal * 1.60;
-                return "El total a abonar es de $" + totalRecargo + " en " + select + " cuotas de $" + totalRecargo / parseInt(select);
+                return "El total a abonar es de $" + totalRecargo + " en " + select + " cuotas de $" + (totalRecargo / parseInt(select)).toFixed(2);
             default:
                 alert("La respuesta ingresada no es válida");
                 calcularCuotas(subtotal);
         }
     } else if(select == "NO"){
-        return "El total a abonar es de $" + subtotal;
+        return "El total a abonar es de $" + subtotal.toFixed(2);
     } else{
         alert("La respuesta ingresada no es válida");
         calcularCuotas(subtotal);
