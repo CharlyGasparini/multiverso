@@ -10771,4 +10771,8 @@ textarea.form-control-lg {
   box-sizing: border-box;
 }
 
+.card {
+  min-height: 300px;
+}
+
 /*# sourceMappingURL=style.css.map */
