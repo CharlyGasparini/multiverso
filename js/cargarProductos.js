@@ -15,12 +15,8 @@ cargarOpciones();
 updateStock(stock);
 
 function cargarEventos() {
-    // document.addEventListener("DOMContentLoaded", () => {
-    //     stock = JSON.parse(localStorage.getItem("stock")) || [];
-    //     cargarOpciones();
-    //     updateStock(stock);
-    // })
 
+    // Evento que carga la imagen del manga cuando este se selecciona en el select
     inpSelect.oninput = () => {
         getMangaInfo()
         .then(result => {

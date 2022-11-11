@@ -21,3 +21,8 @@ function Usuario({name:nombre, address:{city:localidad}}){
     this.nombre = nombre;
     this.localidad = localidad;
 }
+
+function Pedido(carrito, tipoEntrega){
+    this.carrito = carrito;
+    this.tipoEntrega = tipoEntrega;
+}

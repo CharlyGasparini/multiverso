@@ -1,6 +1,8 @@
 // Variables
 let stock = JSON.parse(localStorage.getItem("stock")) || [];
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+let tipoEntrega;
+let costoEntrega;
 
 // Captura los elementos del DOM
 let btnVaciar = document.getElementById("btnVaciar");
@@ -16,21 +18,15 @@ let subtotal = document.getElementById("subtotal");
 let total = document.getElementById("total");
 let btnIniciarCompra = document.getElementById("btnIniciarCompra");
 
-
-
 cargarEventos();
 cargarToastsCompras();
 imprCartas(stock);
 updateCarrito(carrito);
 
-function cargarEventos () {
-    // document.addEventListener("DOMContentLoaded", () => {
-    //     stock = JSON.parse(localStorage.getItem("stock")) || [];
-    //     carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    //     imprCartas(stock);
-    //     updateCarrito(carrito);
-    // });
 
+function cargarEventos () {
+
+    // Evento que crea y agrega un item al carrito en cuanto se hace click sobre el boton de agregar al carrito
     novedades.addEventListener("click", (e) =>{
         if(e.target.classList.contains("btnAgregar")){
             let manga = stock[e.target.value];
@@ -78,6 +74,7 @@ function cargarEventos () {
         }
     })
 
+    // Evento que vacia el carrito
     btnVaciar.onclick = () => {
         if(carrito.length != 0){
             alertWarning.fire({
@@ -96,26 +93,64 @@ function cargarEventos () {
         }
     }
 
+    // Evento que despliega la tabla del carrito de compras
     btnCarrito.onclick = () => {
         listaCarrito.classList.remove("d-none");
         bgListaCarrito.classList.remove("d-none");        
     }
 
+    // Evento que colapsa la tabla del carrito de compras
     btnCerrarCarrito.onclick = () => {
         listaCarrito.classList.add("d-none");
         bgListaCarrito.classList.add("d-none");
     }
 
+    //Evento que permite que al cliquear fuera de la tabla del carrito cuando este esta desplegado, tambien colapse
     bgListaCarrito.onclick = () => {
         listaCarrito.classList.add("d-none");
         bgListaCarrito.classList.add("d-none");
     }
 
+    // Evento que permite al carrito calcular el total de la compra una vez elegido el metodo de entrega
     formEntrega.addEventListener("input", (e) =>{
-        calcTotal(calcSubtotal(carrito), e.target.value);
+        tipoEntrega = e.target.value;
+        switch(e.target.value){
+            case "local":
+                costoEntrega = 0;
+                break;
+            case "domicilio":
+                costoEntrega = 750;
+                break;
+            case "correo":
+                costoEntrega = 400;
+                break;
+        }
+        updateCarrito(carrito);
     })
+
+    // Evento que evalua si se puede hacer la compra y crea el pedido
+    btnIniciarCompra.onclick = () =>{
+        if(carrito.length != 0){
+            if(tipoEntrega != undefined){
+                let pedido = new Pedido(carrito, tipoEntrega);
+                localStorage.setItem("pedido", JSON.stringify(pedido));
+                alertSuccess.fire({
+                    title: "El pedido fue realizado con éxito"
+                })
+            }else{
+                alertError.fire({
+                    title: "No se definió el tipo de entrega"
+                })
+            }
+        } else{
+            alertError.fire({
+                title: "El carrito está vacio"
+            })
+        }
+    } 
 }
 
+// Carga los toast de compras
 function cargarToastsCompras() {
     setInterval(() => {
         getUsuario()
@@ -181,6 +216,7 @@ function cargarToastsCompras() {
     },30000)
 }
 
+// Imprime las cartas de productos
 function imprCartas(arr){
     arr.forEach(elem => {
         let index = arr.indexOf(elem);
@@ -204,13 +240,16 @@ function imprCartas(arr){
     })
 }
 
+// Actualiza el contenido del carrito
 function updateCarrito(arr){
     tbody.innerHTML = "";
     arr.forEach(item => imprItem(item));
     subtotal.innerText = `$${calcSubtotal(arr)}`;
-    badgeCantItems.innerText = carrito.length == 0 ? "" : cantTotalItems(arr);
+    total.innerText = `$${calcTotal(calcSubtotal(arr), costoEntrega == undefined ? 0 : costoEntrega)}`;
+    badgeCantItems.innerText = arr.length == 0 ? "" : cantTotalItems(arr);
 }
 
+// Calcula la cantidad total de productos en el carrito
 function cantTotalItems(arr) {
     let cantTotal = 0;
     arr.forEach(item => {
@@ -219,6 +258,7 @@ function cantTotalItems(arr) {
     return cantTotal;
 }
 
+// Crea la fila del carrito con los datos del producto ingresado
 function imprItem(item){
     let index = carrito.indexOf(item); //capturo el indice del producto en el arreglo stock
     
@@ -314,6 +354,7 @@ function imprItem(item){
     };
 }
 
+// Calcula el subtotal de la compra
 function calcSubtotal(arr){
     let subt = 0;
     arr.forEach(item => {
@@ -322,8 +363,9 @@ function calcSubtotal(arr){
     return subt;
 }
 
+// Calcula el total de la compra teniendo en cuenta el costo del envio
 function calcTotal(subt, costEntr){
     let tot = 0;
     tot += subt + parseFloat(costEntr);
-    total.innerText = `$${tot}`;
+    return tot;
 }
