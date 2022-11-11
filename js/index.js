@@ -18,83 +18,32 @@ const alertSuccess = Swal.mixin({
     title: "producto agregado al carrito",
     timer: 1000
 });
+const alertAgregar = Swal.mixin({
+    grow:"row",
+    showCloseButton:"true",
+    confirmButtonColor: "#3085d6",
+    confirmButtonText: `<i class='fa-solid fa-cart-shopping'></i>
+    Agregar al carrito`,
+    inputLabel: "Cantidad",
+    input: "number",
+    inputValue: "1",
+    customClass: {
+        input: "col-1 mx-auto text-center"
+    },
+    inputValidator: (value) => {
+        if(value < 1){
+            return "La cantidad ingresada no puede ser menor a 1"; 
+        }
+    }
+})
 
 cargarEventos();
+cargarToastsCompras();
 
-setInterval(() => {
-    getUsersName()
-    .then(result => {
-        let nombre = result[Math.floor(Math.random()*result.length)].nombre;
-        let localidad = result[Math.floor(Math.random()*result.length)].localidad
-        let nombreManga = stock[Math.floor(Math.random()*stock.length)].nombre;
-        setTimeout(() => {
-            Toastify({
-                text: `${nombre} de ${localidad} ha comprado ${nombreManga}`,
-                close: true,
-                gravity: "bottom",
-                position: "left",
-                stopOnFocus: true,
-                duration: 5000,
-                onClick: function(){  
-                    let manga = stock.find(elem => elem.nombre == nombreManga);
-                    Swal.fire({
-                        grow:"row",
-                        showCloseButton:"true",
-                        confirmButtonColor: "#3085d6",
-                        confirmButtonText: `<i class='fa-solid fa-cart-shopping'></i>
-                        Agregar al carrito`,
-                        inputLabel: "Cantidad",
-                        input: "number",
-                        inputValue: "1",
-                        customClass: {
-                            input: "col-1 mx-auto text-center"
-                        },
-                        inputValidator: (value) => {
-                            if(value < 1){
-                                return "La cantidad ingresada no puede ser menor a 1"; 
-                            }
-                        },
-                        html:
-                        `
-                        <div class="d-flex">
-                            <img src="${manga.imagen}" alt="" class="img-fluid h-100 my-auto">
-                            <div class ="d-flex flex-column justify-content-center p-5">
-                                <h5 class="display-5 mb-3">${manga.nombre}</h5>
-                                <div class="d-flex justify-content-evenly text-bg-danger p-3 my-3">
-                                    <span class="me-5"><b>Autor/es: </b>${manga.autores}</span>
-                                    <span><b>Volúmenes: </b>${manga.volumenes} (${manga.estado})</span>
-                                    <span><b>Género: </b>${manga.genero.length != 0 ? manga.genero : "Varios" }</span>
-                                </div>
-                                <div>
-                                    <h5 class="display-6 mb-3">Sinopsis</h5>
-                                    <p>${manga.sinopsis}</p>
-                                </div>
-                            </div>
-                        </div>
-                        `
-                    }).then(result => {
-                        if(result.isConfirmed){
-                            let duplicado = carrito.find(item => item.nombre == manga.nombre)
-                            let index = carrito.indexOf(duplicado);
-                            if(duplicado == undefined){
-                                let item = new ItemCarrito(manga, parseInt(result.value));
-                                carrito.push(item);
-                                updateCarrito(carrito);
-                                localStorage.setItem("carrito", JSON.stringify(carrito)); 
-                                alertSuccess.fire();         
-                            }else{
-                                carrito[index].cantidad += parseInt(result.value);
-                                updateCarrito(carrito);
-                                localStorage.setItem("carrito", JSON.stringify(carrito));
-                                alertSuccess.fire();   
-                            }
-                        }
-                    })
-                }
-                }).showToast();
-        }, 1000)
-    })
-},20000)
+// console.log(stock[0]);
+// console.log(traducir(stock[1].sinopsis));
+// console.log(Boolean(JSON.parse(localStorage.getItem("stock"))))
+
 
 function cargarEventos () {
     document.addEventListener("DOMContentLoaded", () => {
@@ -107,23 +56,7 @@ function cargarEventos () {
     novedades.addEventListener("click", (e) =>{
         if(e.target.classList.contains("btnAgregar")){
             let manga = stock[e.target.value];
-            Swal.fire({
-                grow:"row",
-                showCloseButton:"true",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: `<i class='fa-solid fa-cart-shopping'></i>
-                Agregar al carrito`,
-                inputLabel: "Cantidad",
-                input: "number",
-                inputValue: "1",
-                customClass: {
-                    input: "col-1 mx-auto text-center"
-                },
-                inputValidator: (value) => {
-                    if(value < 1){
-                        return "La cantidad ingresada no puede ser menor a 1"; 
-                    }
-                },
+            alertAgregar.fire({
                 html:
                 `
                 <div class="d-flex">
@@ -205,6 +138,67 @@ function cargarEventos () {
     formEntrega.addEventListener("input", (e) =>{
         calcTotal(calcSubtotal(carrito), e.target.value);
     })
+}
+
+function cargarToastsCompras() {
+    setInterval(() => {
+        getUsuario()
+        .then(result => {
+            let nombre = result[Math.floor(Math.random()*result.length)].nombre;
+            let localidad = result[Math.floor(Math.random()*result.length)].localidad
+            let nombreManga = stock[Math.floor(Math.random()*stock.length)].nombre;
+            setTimeout(() => {
+                Toastify({
+                    text: `${nombre} desde la ciudad de ${localidad} ha comprado ${nombreManga}`,
+                    close: true,
+                    gravity: "bottom",
+                    position: "left",
+                    stopOnFocus: true,
+                    duration: 5000,
+                    onClick: function(){  
+                        let manga = stock.find(elem => elem.nombre == nombreManga);
+                        alertAgregar.fire({
+                            html:
+                            `
+                            <div class="d-flex">
+                                <img src="${manga.imagen}" alt="" class="img-fluid h-100 my-auto">
+                                <div class ="d-flex flex-column justify-content-center p-5">
+                                    <h5 class="display-5 mb-3">${manga.nombre}</h5>
+                                    <div class="d-flex justify-content-evenly text-bg-danger p-3 my-3">
+                                        <span class="me-5"><b>Autor/es: </b>${manga.autores}</span>
+                                        <span><b>Volúmenes: </b>${manga.volumenes} (${manga.estado})</span>
+                                        <span><b>Género: </b>${manga.genero.length != 0 ? manga.genero : "Varios" }</span>
+                                    </div>
+                                    <div>
+                                        <h5 class="display-6 mb-3">Sinopsis</h5>
+                                        <p>${manga.sinopsis}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            `
+                        }).then(result => {
+                            if(result.isConfirmed){
+                                let duplicado = carrito.find(item => item.nombre == manga.nombre)
+                                let index = carrito.indexOf(duplicado);
+                                if(duplicado == undefined){
+                                    let item = new ItemCarrito(manga, parseInt(result.value));
+                                    carrito.push(item);
+                                    updateCarrito(carrito);
+                                    localStorage.setItem("carrito", JSON.stringify(carrito)); 
+                                    alertSuccess.fire();         
+                                }else{
+                                    carrito[index].cantidad += parseInt(result.value);
+                                    updateCarrito(carrito);
+                                    localStorage.setItem("carrito", JSON.stringify(carrito));
+                                    alertSuccess.fire();   
+                                }
+                            }
+                        })
+                    }
+                    }).showToast();
+            }, 1000)
+        })
+    },20000)
 }
 
 function imprCartas(arr){
