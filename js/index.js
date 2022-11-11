@@ -1,6 +1,8 @@
-let stock = [];
-let carrito = [];
-// capturo los elementos del DOM
+// Variables
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+// Captura los elementos del DOM
 let btnVaciar = document.getElementById("btnVaciar");
 let btnCarrito = document.getElementById("btnCarrito");
 let listaCarrito = document.getElementById("listaCarrito");
@@ -13,45 +15,21 @@ let formEntrega = document.getElementById("formEntrega");
 let subtotal = document.getElementById("subtotal");
 let total = document.getElementById("total");
 let btnIniciarCompra = document.getElementById("btnIniciarCompra");
-const alertSuccess = Swal.mixin({
-    icon: "success",
-    title: "producto agregado al carrito",
-    timer: 1000
-});
-const alertAgregar = Swal.mixin({
-    grow:"row",
-    showCloseButton:"true",
-    confirmButtonColor: "#3085d6",
-    confirmButtonText: `<i class='fa-solid fa-cart-shopping'></i>
-    Agregar al carrito`,
-    inputLabel: "Cantidad",
-    input: "number",
-    inputValue: "1",
-    customClass: {
-        input: "col-1 mx-auto text-center"
-    },
-    inputValidator: (value) => {
-        if(value < 1){
-            return "La cantidad ingresada no puede ser menor a 1"; 
-        }
-    }
-})
+
+
 
 cargarEventos();
 cargarToastsCompras();
-
-// console.log(stock[0]);
-// console.log(traducir(stock[1].sinopsis));
-// console.log(Boolean(JSON.parse(localStorage.getItem("stock"))))
-
+imprCartas(stock);
+updateCarrito(carrito);
 
 function cargarEventos () {
-    document.addEventListener("DOMContentLoaded", () => {
-        stock = JSON.parse(localStorage.getItem("stock")) || [];
-        carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-        imprCartas(stock);
-        updateCarrito(carrito);
-    });
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     stock = JSON.parse(localStorage.getItem("stock")) || [];
+    //     carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    //     imprCartas(stock);
+    //     updateCarrito(carrito);
+    // });
 
     novedades.addEventListener("click", (e) =>{
         if(e.target.classList.contains("btnAgregar")){
@@ -84,12 +62,16 @@ function cargarEventos () {
                         carrito.push(item);
                         updateCarrito(carrito);
                         localStorage.setItem("carrito", JSON.stringify(carrito)); 
-                        alertSuccess.fire();         
+                        alertSuccess.fire({
+                            title: `${item.nombre} ha sido agregado al carrito`
+                        });         
                     }else{
                         carrito[index].cantidad += parseInt(result.value);
                         updateCarrito(carrito);
                         localStorage.setItem("carrito", JSON.stringify(carrito));
-                        alertSuccess.fire();   
+                        alertSuccess.fire({
+                            title: `${carrito[index].nombre} ha sido agregado al carrito`
+                        });  
                     }
                 }
             })
@@ -97,27 +79,21 @@ function cargarEventos () {
     })
 
     btnVaciar.onclick = () => {
-        Swal.fire({
-            icon: "warning",
-            title: "¿Desea vaciar el carrito?",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Si, vaciar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if(result.isConfirmed) {
-                carrito.splice(0, carrito.length); // borro el producto dentro del arreglo
-                updateCarrito(carrito); // imprimo la tabla actualizada
-                localStorage.setItem("carrito", JSON.stringify(carrito)); // cargo en storage
-                Swal.fire({
-                    icon: "success",
-                    title: "El carrito ha sido vaciado",
-                    timer: 1000,
-                    confirmButtonColor: "#3085d6",
-                })
-            }
-        })
+        if(carrito.length != 0){
+            alertWarning.fire({
+                title: "¿Desea vaciar el carrito?"
+            }).then((result) => {
+                if(result.isConfirmed) {
+                    carrito.splice(0, carrito.length); // borro el producto dentro del arreglo
+                    updateCarrito(carrito); // imprimo la tabla actualizada
+                    localStorage.setItem("carrito", JSON.stringify(carrito)); // cargo en storage
+                    alertSuccess.fire({
+                        title: "El carrito ha sido vaciado",
+                        timer: 1000,
+                    })
+                }
+            })
+        }
     }
 
     btnCarrito.onclick = () => {
@@ -149,7 +125,7 @@ function cargarToastsCompras() {
             let nombreManga = stock[Math.floor(Math.random()*stock.length)].nombre;
             setTimeout(() => {
                 Toastify({
-                    text: `${nombre} desde la ciudad de ${localidad} ha comprado ${nombreManga}`,
+                    text: `${nombre.toUpperCase()} desde la ciudad de ${localidad.toUpperCase()} ha comprado ${nombreManga.toUpperCase()}`,
                     close: true,
                     gravity: "bottom",
                     position: "left",
@@ -185,12 +161,16 @@ function cargarToastsCompras() {
                                     carrito.push(item);
                                     updateCarrito(carrito);
                                     localStorage.setItem("carrito", JSON.stringify(carrito)); 
-                                    alertSuccess.fire();         
+                                    alertSuccess.fire({
+                                        title: `${item.nombre} ha sido agregado al carrito`
+                                    });          
                                 }else{
                                     carrito[index].cantidad += parseInt(result.value);
                                     updateCarrito(carrito);
                                     localStorage.setItem("carrito", JSON.stringify(carrito));
-                                    alertSuccess.fire();   
+                                    alertSuccess.fire({
+                                        title: `${carrito[index].nombre} ha sido agregado al carrito`
+                                    });    
                                 }
                             }
                         })
@@ -198,7 +178,7 @@ function cargarToastsCompras() {
                     }).showToast();
             }, 1000)
         })
-    },20000)
+    },30000)
 }
 
 function imprCartas(arr){
@@ -228,7 +208,15 @@ function updateCarrito(arr){
     tbody.innerHTML = "";
     arr.forEach(item => imprItem(item));
     subtotal.innerText = `$${calcSubtotal(arr)}`;
-    badgeCantItems.innerText = carrito.length == 0 ? "" : carrito.length;
+    badgeCantItems.innerText = carrito.length == 0 ? "" : cantTotalItems(arr);
+}
+
+function cantTotalItems(arr) {
+    let cantTotal = 0;
+    arr.forEach(item => {
+        cantTotal += item.cantidad;
+    })
+    return cantTotal;
 }
 
 function imprItem(item){
@@ -276,14 +264,8 @@ function imprItem(item){
     
     let btnDel = document.getElementById(`btnDel${index}`); // capturo el boton de borrar elemento de la fila
     btnDel.onclick = () => {
-        Swal.fire({
-            icon: "warning",
-            title: `¿Desea borrar ${carrito[index].nombre} del carrito?`,
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Si, borrar",
-            cancelButtonText: "Cancelar",
+        alertWarning.fire({
+            title: `¿Desea borrar ${carrito[index].nombre} del carrito?`
         }).then((result) => {
             if(result.isConfirmed) {
                 carrito.splice(index, 1); // borro el producto dentro del arreglo
@@ -313,14 +295,8 @@ function imprItem(item){
             updateCarrito(carrito);
             localStorage.setItem("carrito", JSON.stringify(carrito));
         } else if(carrito[index].cantidad == 1){
-            Swal.fire({
-                icon: "warning",
-                title: `¿Desea borrar ${carrito[index].nombre} del carrito?`,
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Si, borrar",
-                cancelButtonText: "Cancelar",
+            alertWarning.fire({
+                title: `¿Desea borrar ${carrito[index].nombre} del carrito?`
             }).then((result) => {
                 if(result.isConfirmed) {
                     carrito.splice(index, 1); // borro el producto dentro del arreglo

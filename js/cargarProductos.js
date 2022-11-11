@@ -1,5 +1,7 @@
-let stock = [];
-// capturo los elementos del DOM
+// Variables
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+
+// Captura de los elementos del DOM
 let tbody = document.getElementById("tbody");
 let btnVaciar = document.getElementById("btnVaciar");
 let btnCargar = document.getElementById("btnCargar");
@@ -9,14 +11,15 @@ let inpStock = document.getElementById("stock");
 let previewImg = document.getElementById("preview");
 
 cargarEventos();
+cargarOpciones();
+updateStock(stock);
 
 function cargarEventos() {
-  
-    document.addEventListener("DOMContentLoaded", () => {
-        stock = JSON.parse(localStorage.getItem("stock")) || [];
-        cargarOpciones();
-        updateStock(stock);
-    })
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     stock = JSON.parse(localStorage.getItem("stock")) || [];
+    //     cargarOpciones();
+    //     updateStock(stock);
+    // })
 
     inpSelect.oninput = () => {
         getMangaInfo()
@@ -30,7 +33,7 @@ function cargarEventos() {
         })
     }
 
-    //evento que carga un producto en el stock
+    // Evento que carga un producto en el stock
     btnCargar.onclick = (e) => {
         e.preventDefault();
 
@@ -51,65 +54,51 @@ function cargarEventos() {
                         stock.push(producto);
                         imprProducto(producto);
                         localStorage.setItem("stock", JSON.stringify(stock));
-                        Swal.fire({
-                            icon: "success",
-                            title: "Producto agregado",
-                            timer: 1000
+                        alertSuccess.fire({
+                            title: `${producto.nombre} ha sido agregado al stock`
                         });
                         inpSelect.value = "";
                         inpPrecio.value = "";
                     } else{
-                        Swal.fire({
-                            icon: "warning",
-                            title: "El producto ya esta en stock",
-                            timer: 1000
+                        alertError.fire({      
+                            title: "El producto ya esta en stock"       
                         })
                     }
                 })
                 
             } else {
-                Swal.fire({
-                    icon: "warning",
-                    title: "Los valores deben ser mayores a 0",
-                    timer: 1000
+                alertError.fire({   
+                    title: "El precio no puede ser menor a $1"             
                 })
             }
 
         } else{
-            Swal.fire({
-                icon: "warning",
-                title: "Complete los campos vacios",
-                timer: 1000
+            alertError.fire({
+                title: "Complete los campos vacios"
             })
         }  
     }
 
-    // evento que vacia la tabla
+    // Evento que vacia la tabla
     btnVaciar.onclick = () => {
-        Swal.fire({
-            icon: "warning",
-            title: "¿Desea vaciar el stock?",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Si, vaciar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if(result.isConfirmed) {
-                stock.splice(0, stock.length); // borro el producto dentro del stockeglo
-                updateStock(stock); // imprimo la tabla actualizada
-                localStorage.setItem("stock", JSON.stringify(stock)); // cargo en storage
-                Swal.fire({
-                    icon: "success",
-                    title: "El stock ha sido vaciado",
-                    timer: 1000,
-                    confirmButtonColor: "#3085d6",
-                })
-            }
-        })
+        if(stock.length != 0){
+            alertWarning.fire({
+                title: "¿Desea vaciar el stock?"
+            }).then((result) => {
+                if(result.isConfirmed) {
+                    stock.splice(0, stock.length); // borro el producto dentro del stockeglo
+                    updateStock(stock); // imprimo la tabla actualizada
+                    localStorage.setItem("stock", JSON.stringify(stock)); // cargo en storage
+                    alertSuccess.fire({
+                        title: "El stock ha sido vaciado",
+                    })
+                }
+            })
+        }
     }
 }
 
+// Inserta los nombres de mangas de la API como opciones de un select
 function cargarOpciones(){
     getMangaInfo()
     .then(result => {    
@@ -123,11 +112,13 @@ function cargarOpciones(){
     })
 }
 
+// Actualiza el contenido de la lista de productos cargados
 function updateStock(arr){
     tbody.innerHTML = "";
     arr.forEach(prod => imprProducto(prod));
 }
 
+// Crea una fila con el producto cargado
 function imprProducto(producto) {
     let index = stock.indexOf(producto); //capturo el indice del producto en el arreglo stock
 
