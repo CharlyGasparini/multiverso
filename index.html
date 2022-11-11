@@ -1,87 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Link de hoja de estilos -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- Link de toastify -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <!-- Link Favicon -->
     <link rel="shortcut icon" href="img/multiverso-logo.png" type="image/x-icon">
     <!-- Script Fontawesome icons -->
     <script src="https://kit.fontawesome.com/0fd635b4e8.js" crossorigin="anonymous"></script>
-
+    <!-- Script de objetos -->
+    <script src="../js/objetos.js"></script>
     <title>MULTIVERSO COMIC STORE</title>
 </head>
-<body class="bg-light">
-
-  <header>
-    <nav class="navbar navbar-expand-lg text-bg-light">
-        <div class="container">
-          <a class="navbar-brand" href="#">
-            <img src="img/multiverso-logo.png" alt="">
-          </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="index.html">Inicio</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Mangas</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Comics</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Figuras</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Preventas</a>
-              </li>
-            </ul>
-            <ul class="navbar-nav">
-              <li class="nav-item me-3">
-                <a href="pages/carrito.html">
-                  <i class="fa-solid fa-cart-shopping fs-3 text-danger"></i>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="">
-                  <i class="fa-solid fa-user fs-3 text-danger"></i>
-                </a>
-              </li>
-            </ul>
+<body class="text-bg-light">
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg text-bg-light sticky-top d-flex justify-content-between">
+    <!-- LISTA DESPLEGABLE DEL CARRITO DE COMPRAS -->
+    <div id="listaCarrito" class="d-none position-absolute top-0 end-0 overflow-scroll p-3 bg-light">
+      <button id="btnCerrarCarrito" class="btn fs-2 d-block">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="display-5 text-center">Carrito</h3>
+      <table class="table table-striped text-center">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Precio($)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+        <tfoot>
+          <tr>
+            <td>Subtotal:</td>
+            <td></td>
+            <td></td>
+            <td id="subtotal" class="fw-bold"></td>
+          </tr>
+        </tfoot>
+      </table>
+      <button class="btn btn-danger w-100" id="btnVaciar">Vaciar carrito</button>
+      <div id="metodoEntrega" class=" my-3">
+        <h4 class="display-6  text-center">Método de entrega</h4>
+        <form action="" method="post"  id="formEntrega" class="d-flex flex-column align-items-center">
+          <div class="input-group row row-cols-2 my-1">
+            <div class="input-group-text col-2 col-md-1 ">
+              <input id="entregaRadio1" name="RadioOptions" class="form-check-input mt-0 mx-auto check" type="radio" value="0" aria-label="Radio button for following text input">
+            </div>
+            <div class="card col-10 col-md-11 p-3">
+              <div class="card-body d-flex justify-content-between">Retiro en el local</div>
+            </div>
           </div>
-        </div>
-    </nav>
-
+          <div class="input-group row row-cols-2 my-1">
+            <div class="input-group-text col-2 col-md-1 ">
+              <input id="entregaRadio2" name="RadioOptions" class="form-check-input mt-0 mx-auto" type="radio" value="750" aria-label="Radio button for following text input">
+            </div>
+            <div class="card col-10 col-md-11 p-3">
+              <div class="card-body d-flex justify-content-between">
+                Envio a domicilio
+                <span class="precio">$750</span>
+              </div>
+            </div>
+          </div>
+          <div class="input-group row row-cols-2 my-1">
+            <div class="input-group-text col-2 col-md-1 ">
+              <input id="entregaRadio3" name="RadioOptions" class="form-check-input mt-0 mx-auto" type="radio" value="400" aria-label="Radio button for following text input">
+            </div>
+            <div class="card col-10 col-md-11 p-3">
+              <div class="card-body d-flex justify-content-between">
+                Envio a sucursal de Correo Argentino
+                <span class="precio">$400</span>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <table class="table table-striped my-3">
+        <thead>
+          <th></th>
+          <th class="display-6">Total</th>
+          <th></th>
+          <th id="total" class="fw-bold"></th>
+          <th></th>
+        </thead>
+      </table>     
+      <button id="btnIniciarCompra" class="btn btn-success w-100">
+        <a href="#" class="text-light text-decoration-none">Iniciar compra</a>
+      </button>
+    </div>
+    <div id="bgListaCarrito" class="d-none bg-dark opacity-50 position-absolute top-0"></div>
+    <!-- CONTENIDO DE LA NAVBAR -->
     <div class="container">
-      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="false">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/multiverso-logo.png" alt="">
+      </a>
+
+      <button class="btn navbar-toggler text-danger" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa-solid fa-list"></i>
+      </button>
+
+      <button id="btnCarrito" class="btn text-danger position-relative">
+        <i class="fa-solid fa-cart-shopping fs-3"></i>
+        <span id="badgeCantItems" class="badge text-bg-secondary rounded-circle position-absolute end-0 top-50"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="index.html">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Mangas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Comics</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Figuras</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Preventas</a>
+          </li>
+        </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-primary" type="submit">Buscar</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  <!-- HEADER -->
+  <header>
+    <!-- HERO CON CARROUSEL -->
+    <div class="container">
+      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
           <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
           </div>
           <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="https://picsum.photos/1200/800" class="d-block w-100" alt="...">
+            <div class="carousel-item active" data-bs-interval="5000">
+              <img src="https://pbs.twimg.com/media/Ei7nh5_X0AAvuav.jpg:large" class="d-block w-100" alt="...">
               <div class="carousel-caption d-none d-md-block">
                 <h5>First slide label</h5>
                 <p>Some representative placeholder content for the first slide.</p>
               </div>
             </div>
-            <div class="carousel-item">
-              <img src="https://picsum.photos/1200/800" class="d-block w-100" alt="...">
+            <div class="carousel-item" data-bs-interval="5000">
+              <img src="https://i.pinimg.com/originals/75/18/58/751858b2d126a52750807eb1770f5c86.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption d-none d-md-block">
                 <h5>Second slide label</h5>
                 <p>Some representative placeholder content for the second slide.</p>
               </div>
             </div>
-            <div class="carousel-item">
-              <img src="https://picsum.photos/1200/800" class="d-block w-100" alt="...">
+            <div class="carousel-item" data-bs-interval="5000">
+              <img src="https://i.pinimg.com/736x/11/9c/ec/119cec43e378d08272c01cd0faf2cfd6.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption d-none d-md-block">
                 <h5>Third slide label</h5>
                 <p>Some representative placeholder content for the third slide.</p>
@@ -99,85 +179,25 @@
       </div>       
     </div>       
   </header>
-
+  <!-- MAIN -->
   <main id="main">
-    <section id="news" class="my-5">          
-        <div class="container text-center p-5 text-bg-secondary bg-opacity-50">
-            <h2 class="display-4 mb-5">NOVEDADES</h2>
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="novedades"></div>
-            <button class="btn btn-outline-danger mt-3">
-              <a href="pages/cargaProductos.html" class="text-white text-decoration-none">Cargar productos</a>
-            </button>
-        </div>
-    </section>
-    
-    <section>
+    <!-- SECCION DE NOVEDADES -->
+    <section class="my-5">          
       <div class="container text-center">
-        <h3 class="display-6">Carrito</h3>
-        <table class="table table-striped table-primary">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Cantidad</th>
-              <th>Precio</th>
-              <th>Operaciones</th>
-            </tr>
-          </thead>
-          <tbody id="tbody">
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>Subtotal:</td>
-              <td></td>
-              <td id="subtotal" class="fw-bold"></td>
-              <td>
-                <button class="btn btn-danger" id="btnVaciar">Vaciar carrito</button>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-        <h3 class="display-6">Cantidad de cuotas</h3>
-        <div class="d-flex justify-content-evenly my-3">
-          <div>
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio1" value="1" checked>
-            <label class="form-check-label" for="radio1">1 pago</label>
-          </div>
-          <div>
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio2" value="3">
-            <label class="form-check-label" for="radio2">3 pagos</label>
-          </div>
-          <div>
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio3" value="6">
-            <label class="form-check-label" for="radio3">6 pagos</label>
-          </div>
-          <div>
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio4" value="9">
-            <label class="form-check-label" for="radio4">9 pagos</label>
-          </div>
-          <div>
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio5" value="12">
-            <label class="form-check-label" for="radio5">12 pagos</label>
-          </div>
-        </div>
-        <div class="d-flex justify-content-around align-items-baseline">
-          <h3 class="display-6 col-3">Total</h3>
-          <p id="total" class="col-9 fw-bold"></p>
-        </div>
-        <button class="btn btn-primary">
-          <a href="pages/carrito.html" class="text-white text-decoration-none">
-            Iniciar compra
-          </a>
+        <h2 class="display-4 mb-5">Novedades</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3" id="novedades"></div>
+        <button class="btn btn-primary mt-3">
+          <a href="pages/cargarProductos.html" class="text-white text-decoration-none">Cargar productos</a>
         </button>
-    </div>
+      </div>
     </section>
-   
   </main>     
-
+  <!-- FOOTER -->
   <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
     <div class="container row mx-auto">
       <div class="col d-flex align-center justify-content-between">
         <span class="mb-3 mb-md-0 text-muted">© 2022 Company, Inc</span>
-
+        <!-- ICONOS DE REDES SOCIALES -->
         <ul class="nav col-6 justify-content-end list-unstyled d-flex">
           <li class="ms-3">
             <a class="text-muted" href="#">
@@ -196,15 +216,20 @@
           </li>
         </ul>
       </div>
-  
-      
-    </div>
-    
+    </div>   
   </footer>
   
   <!-- Script de Bootstrap -->
   <script src="js/bootstrap.js"></script>
+  <!-- Script de Sweet Alert 2 -->
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Script info de API -->
+  <script src="js/getMangaInfo.js"></script>
+  <script src="js/getUsersName.js"></script>
+  <script src="js/mathRandom.js"></script>
+  <!-- Script de Toastify -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <!-- Script funciones del index -->
   <script src="js/index.js"></script>
-
 </body>
 </html>

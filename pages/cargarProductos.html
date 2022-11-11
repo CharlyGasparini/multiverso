@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link de hoja de estilos -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Link Favicon -->
+    <link rel="shortcut icon" href="../img/multiverso-logo.png" type="image/x-icon">
+    <!-- Script Fontawesome icons -->
+    <script src="https://kit.fontawesome.com/0fd635b4e8.js" crossorigin="anonymous"></script>
+    <!-- Script de objetos -->
+    <script src="../js/objetos.js"></script>
+    <title>MULTIVERSO COMIC STORE | CARGA DE PRODUCTOS</title>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg text-bg-light sticky-top d-flex justify-content-between position-relative">
+    <!-- CONTENIDO DE LA NAVBAR -->
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="../img/multiverso-logo.png" alt="">
+      </a>
+
+      <button class="btn navbar-toggler text-danger" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa-solid fa-list"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="../index.html">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Mangas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Comics</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Figuras</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Preventas</a>
+          </li>
+        </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-primary" type="submit">Buscar</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  <!-- HEADER -->
+  <header class="text-center">
+    <h1 class="display-4 mb-5">CARGA DE PRODUCTOS</h1>  
+  </header>
+  <!-- MAIN -->
+  <main id="main" class="text-center">
+    <!-- SECCION DE CARGA DE PRODUCTOS -->
+    <section id="cargaProductos" class="my-5">
+        <div class="container text-center">
+            <form action="">
+              <div class="row row-cols-1 row-cols-md-2">
+                <div class="col-md-8">
+                  <label for="mangas">Manga</label>
+                  <select name="" id="mangas" class="form-select mb-3" required>
+                    <option value="#"></option>
+                  </select>
+                  
+                  <label for="precio">Precio</label>
+                  <input type="number" name="precio" id="precio" class="form-control mb-3" min="0" required>
+                  
+                  <input type="submit" value="Cargar Producto" id="btnCargar" class="btn btn-success">
+                </div>
+
+                <div class="col-md-4 d-flex flex-column">
+                  <label for="preview">Vista previa</label>
+                  <img src="#" alt="" id="preview" class="img-fluid w-50 mx-auto">
+                </div>
+              </div>
+            </form>
+        </div>
+    </section>
+    <!-- SECCION TABLA DE PRODUCTOS CARGADOS -->
+    <section id="tablaProductos" class="my-5">
+      <div class="container ">
+        <table class="table table-striped text-center">
+          <thead>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Operaciones</th>
+            
+          </thead>
+          <tbody id="tbody"></tbody>
+          <tfoot>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>
+              <button class="btn btn-danger" id="btnVaciar">Vaciar stock</button>
+            </th>
+          </tfoot>
+        </table>
+        <button class="btn btn-primary">
+          <a href="../index.html" class="text-white text-decoration-none">Ir a pagina principal</a>
+        </button>
+      </div>
+    </section>
+  </main>
+  <!-- FOOTER -->
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <div class="container row mx-auto">
+      <div class="col d-flex align-center justify-content-between">
+        <span class="mb-3 mb-md-0 text-muted">© 2022 Company, Inc</span>
+        <!-- ICONOS DE REDES SOCIALES -->
+        <ul class="nav col-6 justify-content-end list-unstyled d-flex">
+          <li class="ms-3">
+            <a class="text-muted" href="#">
+              <i class="fa-brands fa-twitter fs-3 text-danger"></i>
+            </a>
+          </li>
+          <li class="ms-3">
+            <a class="text-muted" href="#">
+              <i class="fa-brands fa-instagram fs-3 text-danger"></i>
+            </a>
+          </li>
+          <li class="ms-3">
+            <a class="text-muted" href="#">
+              <i class="fa-brands fa-square-facebook fs-3 text-danger"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div> 
+  </footer>
+
+  <!-- Script de Bootstrap -->        
+  <script src="../js/bootstrap.js"></script>
+  <!-- Script de Sweet Alert -->
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Script info de API -->
+  <script src="../js/getMangaInfo.js"></script>
+  <!-- Script funciones del index -->
+  <script src="../js/cargarProductos.js"></script>
+</body>
+</html>

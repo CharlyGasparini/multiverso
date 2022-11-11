@@ -1,0 +1,31 @@
+@media (min-width: 768px){
+    #listaCarrito{
+        width: 80vw;
+    }
+
+    .navbar-brand{
+        img{
+            width: 8rem;
+        }
+    }
+}
+
+@media (min-width: 992px){
+    #listaCarrito{
+        width: 60vw;
+    }
+
+    #btnCarrito{
+        order: 1;
+    }
+}
+
+@media (min-width: 1200px){
+    #listaCarrito{
+        width: 40vw;
+    }
+
+    #btnCarrito{
+        order: 1;
+    }
+}

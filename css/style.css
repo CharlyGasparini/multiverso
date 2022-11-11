@@ -10771,8 +10771,47 @@ textarea.form-control-lg {
   box-sizing: border-box;
 }
 
-.card {
-  min-height: 300px;
+tr {
+  max-height: 150px;
+}
+
+#listaCarrito {
+  z-index: 2;
+  height: 100vh;
+  width: 35vw;
+}
+
+#bgListaCarrito {
+  z-index: 1;
+  height: 100vh;
+  width: 100vw;
+}
+
+.img-thumbnail {
+  max-width: 100px;
+}
+
+#btnCantidad {
+  bottom: 0;
+}
+
+@media (max-width: 768px) {
+  #listaCarrito {
+    width: 80vw;
+  }
+  .navbar-brand img {
+    width: 8rem;
+  }
+}
+@media (min-width: 992px) {
+  #btnCarrito {
+    order: 1;
+  }
+}
+@media (max-width: 425px) {
+  #listaCarrito {
+    width: 100vw;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */
